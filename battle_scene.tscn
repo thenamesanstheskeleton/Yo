@@ -1,0 +1,126 @@
+[gd_scene format=3 uid="uid://8sojrd8q8igy"]
+
+[ext_resource type="Script" uid="uid://d3dnqbq2srpow" path="res://scripts/battle/BattleManager.gd" id="1_3hov6"]
+[ext_resource type="Texture2D" uid="uid://cwsnv7h6v45y4" path="res://assets/images/characters/battle/greater_dog.png" id="2_6iigb"]
+[ext_resource type="PackedScene" uid="uid://b7k3p73qvwo7b" path="res://scenes/battle/narrator_box.tscn" id="4_mpswg"]
+[ext_resource type="Texture2D" uid="uid://b6ccjn1527rle" path="res://assets/images/ui/battle/spr_fight0.png" id="5_3511k"]
+[ext_resource type="PackedScene" uid="uid://bwjvsjl7ekq4g" path="res://scenes/battle/enemy_name.tscn" id="5_te27b"]
+[ext_resource type="PackedScene" uid="uid://dfxt0bi1dv6fk" path="res://scenes/battle/player_stats.tscn" id="6_7i1my"]
+[ext_resource type="Texture2D" uid="uid://cropv15gy6on3" path="res://assets/images/ui/battle/spr_fight1.png" id="6_puhd7"]
+[ext_resource type="PackedScene" uid="uid://dy6yop82hyvy4" path="res://scenes/battle/enemy_hp_bar.tscn" id="7_7s01p"]
+[ext_resource type="Texture2D" uid="uid://cjwrfm4o45128" path="res://assets/images/ui/battle/spr_act0.png" id="7_mpswg"]
+[ext_resource type="Texture2D" uid="uid://ft0so67o1v8e" path="res://assets/images/ui/battle/spr_act1.png" id="8_te27b"]
+[ext_resource type="Texture2D" uid="uid://cxpf6tnrgp7sa" path="res://assets/images/ui/battle/spr_item0.png" id="9_7i1my"]
+[ext_resource type="Texture2D" uid="uid://bw26mtyvn4038" path="res://assets/images/ui/battle/spr_item1.png" id="10_7s01p"]
+[ext_resource type="Texture2D" uid="uid://oxcdkimwjo20" path="res://assets/images/ui/battle/spr_mercy0.png" id="11_tc5fe"]
+[ext_resource type="PackedScene" uid="uid://s5x36wsgp1ao" path="res://scenes/battle/battle_box.tscn" id="12_3511k"]
+[ext_resource type="Texture2D" uid="uid://dcofvykhyb27q" path="res://assets/images/ui/battle/spr_mercy1.png" id="12_tpsmh"]
+[ext_resource type="PackedScene" uid="uid://daw2ytep8k80k" path="res://scenes/battle/fight_meter.tscn" id="13_7dnm1"]
+[ext_resource type="Texture2D" uid="uid://2qsfal8tdwi5" path="res://assets/images/ui/souls/red_soul_pixel.png" id="17_7s01p"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7i1my"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+
+[node name="BattleScene" type="Control" unique_id=1809408519]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_3hov6")
+
+[node name="Background" type="ColorRect" parent="." unique_id=524911238]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="UI" type="CanvasLayer" parent="." unique_id=1097818230]
+
+[node name="BackgroundDim" type="ColorRect" parent="UI" unique_id=-1294967293]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.3)
+
+[node name="EnemyLayer" type="Node2D" parent="UI" unique_id=1102725155]
+position = Vector2(960, 280)
+
+[node name="EnemySprite" type="Sprite2D" parent="UI/EnemyLayer" unique_id=779288167]
+scale = Vector2(0.55, 0.55)
+texture = ExtResource("2_6iigb")
+
+[node name="NarratorBox" parent="UI" unique_id=1807172472 instance=ExtResource("4_mpswg")]
+theme_override_styles/panel = SubResource("StyleBoxFlat_7i1my")
+
+[node name="EnemyNameBtn" parent="UI" unique_id=164434755 instance=ExtResource("5_te27b")]
+offset_right = 620.0
+
+[node name="EnemyHPBarRoot" parent="UI" unique_id=1651303426 instance=ExtResource("7_7s01p")]
+visible = false
+
+[node name="PlayerStatsRoot" parent="UI" unique_id=270534945 instance=ExtResource("6_7i1my")]
+
+[node name="MenuRow" type="HBoxContainer" parent="UI" unique_id=1375883128]
+offset_left = 420.0
+offset_top = 930.0
+offset_right = 1100.0
+offset_bottom = 980.0
+theme_override_constants/separation = 20
+
+[node name="FightBtn" type="TextureButton" parent="UI/MenuRow" unique_id=817371554]
+custom_minimum_size = Vector2(110, 42)
+layout_mode = 2
+texture_normal = ExtResource("5_3511k")
+texture_pressed = ExtResource("6_puhd7")
+
+[node name="ActBtn" type="TextureButton" parent="UI/MenuRow" unique_id=1424492918]
+custom_minimum_size = Vector2(110, 42)
+layout_mode = 2
+texture_normal = ExtResource("7_mpswg")
+texture_pressed = ExtResource("8_te27b")
+
+[node name="ItemBtn" type="TextureButton" parent="UI/MenuRow" unique_id=1258448097]
+custom_minimum_size = Vector2(110, 42)
+layout_mode = 2
+texture_normal = ExtResource("9_7i1my")
+texture_pressed = ExtResource("10_7s01p")
+
+[node name="MercyBtn" type="TextureButton" parent="UI/MenuRow" unique_id=1624769803]
+custom_minimum_size = Vector2(110, 42)
+layout_mode = 2
+texture_normal = ExtResource("11_tc5fe")
+texture_pressed = ExtResource("12_tpsmh")
+
+[node name="MenuSelector" type="Sprite2D" parent="UI/MenuRow" unique_id=1024778160]
+position = Vector2(-20, -59)
+scale = Vector2(0.099, 0.09)
+texture = ExtResource("17_7s01p")
+
+[node name="BattleBox" parent="UI" unique_id=2011932100 instance=ExtResource("12_3511k")]
+visible = false
+
+[node name="FightMeter" parent="UI" unique_id=979139934 instance=ExtResource("13_7dnm1")]
+visible = false
+anchors_preset = 8
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ActSubmenu" type="GridContainer" parent="UI" unique_id=1356397463]
+visible = false
+offset_left = 710.0
+offset_top = 570.0
+offset_right = 1210.0
+offset_bottom = 697.0
+columns = 2

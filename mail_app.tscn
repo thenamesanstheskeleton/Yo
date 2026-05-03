@@ -1,0 +1,145 @@
+[gd_scene format=3 uid="uid://bonedows_mail_v2"]
+
+[ext_resource type="Script"   path="res://scripts/bonedows/bonedows_apps/mail_app.gd" id="1_ml"]
+[ext_resource type="FontFile" path="res://assets/fonts/DTM-Sans.otf"  id="2_font"]
+[ext_resource type="FontFile" path="res://assets/fonts/DTM-Mono.otf"  id="3_mono"]
+
+[sub_resource type="StyleBoxFlat" id="SB_win"]
+bg_color     = Color(0.06, 0.06, 0.13, 0.98)
+border_color = Color(0.20, 0.20, 0.40, 1.0)
+set_border_width_all = 1
+
+[sub_resource type="StyleBoxFlat" id="SB_title"]
+bg_color     = Color(0.08, 0.10, 0.22, 1.0)
+border_color = Color(0.20, 0.20, 0.45, 1.0)
+border_width_bottom = 1
+
+[sub_resource type="StyleBoxFlat" id="SB_back_normal"]
+bg_color     = Color(0.12, 0.12, 0.24, 1.0)
+border_color = Color(0.30, 0.30, 0.55, 1.0)
+set_border_width_all = 1
+corner_radius_top_left     = 3
+corner_radius_top_right    = 3
+corner_radius_bottom_left  = 3
+corner_radius_bottom_right = 3
+
+[node name="MailApp" type="Control"]
+anchors_preset  = 15
+anchor_right    = 1.0
+anchor_bottom   = 1.0
+script = ExtResource("1_ml")
+
+[node name="WindowBG" type="Panel" parent="."]
+anchors_preset  = 15
+anchor_right    = 1.0
+anchor_bottom   = 1.0
+theme_override_styles/panel = SubResource("SB_win")
+
+; ── Title bar ─────────────────────────────────────────
+[node name="TitleBar" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left   = 0.0
+anchor_top    = 0.0
+anchor_right  = 1.0
+anchor_bottom = 0.0
+offset_bottom = 34
+grow_horizontal = 2
+theme_override_styles/panel = SubResource("SB_title")
+
+[node name="TitleLabel" type="Label" parent="TitleBar"]
+layout_mode = 0
+position = Vector2(12, 7)
+size     = Vector2(600, 22)
+text     = "📬  BONE MAIL  ——  Inbox"
+theme_override_font_sizes/font_size = 15
+theme_override_colors/font_color    = Color(0.6, 0.85, 1.0, 1.0)
+theme_override_fonts/font = ExtResource("2_font")
+
+[node name="CloseBtn" type="Button" parent="TitleBar"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left   = 1.0
+anchor_top    = 0.0
+anchor_right  = 1.0
+anchor_bottom = 1.0
+offset_left   = -50
+offset_right  = -4
+offset_top    = 2
+offset_bottom = -2
+grow_horizontal = 0
+text = " ✕ "
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color    = Color(1.0, 0.45, 0.45, 1.0)
+
+; ── Main area ─────────────────────────────────────────
+[node name="MainArea" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left   = 0.0
+anchor_top    = 0.0
+anchor_right  = 1.0
+anchor_bottom = 1.0
+offset_top    = 34
+grow_horizontal = 2
+grow_vertical   = 2
+
+; ── Inbox panel ───────────────────────────────────────
+[node name="InboxPanel" type="Control" parent="MainArea"]
+anchors_preset  = 15
+anchor_right    = 1.0
+anchor_bottom   = 1.0
+
+[node name="InboxScroll" type="ScrollContainer" parent="MainArea/InboxPanel"]
+anchors_preset  = 15
+anchor_right    = 1.0
+anchor_bottom   = 1.0
+offset_left     = 10
+offset_right    = -10
+offset_top      = 10
+offset_bottom   = -10
+
+[node name="InboxVBox" type="VBoxContainer" parent="MainArea/InboxPanel/InboxScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+; ── Read panel ────────────────────────────────────────
+[node name="ReadPanel" type="Control" parent="MainArea"]
+anchors_preset  = 15
+anchor_right    = 1.0
+anchor_bottom   = 1.0
+visible = false
+
+[node name="BackBtn" type="Button" parent="MainArea/ReadPanel"]
+layout_mode = 0
+position = Vector2(10, 8)
+size     = Vector2(110, 34)
+text     = "← Back"
+theme_override_font_sizes/font_size = 15
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_styles/normal = SubResource("SB_back_normal")
+
+[node name="ReadScroll" type="ScrollContainer" parent="MainArea/ReadPanel"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left   = 0.0
+anchor_top    = 0.0
+anchor_right  = 1.0
+anchor_bottom = 1.0
+offset_left   = 14
+offset_right  = -14
+offset_top    = 50
+offset_bottom = -14
+grow_horizontal = 2
+grow_vertical   = 2
+
+[node name="ReadText" type="RichTextLabel" parent="MainArea/ReadPanel/ReadScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+bbcode_enabled  = true
+fit_content     = true
+scroll_active   = false
+theme_override_font_sizes/normal_font_size = 18
+theme_override_colors/default_color        = Color(0.88, 0.92, 1.0, 1.0)
+theme_override_fonts/normal_font = ExtResource("3_mono")

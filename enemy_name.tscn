@@ -1,0 +1,32 @@
+[gd_scene format=3 uid="uid://bwjvsjl7ekq4g"]
+
+[ext_resource type="Script" uid="uid://bkum17s5vrtv2" path="res://scripts/battle/EnemyName.gd" id="1_y165g"]
+[ext_resource type="Texture2D" uid="uid://17s7o1527rle" path="res://assets/images/ui/souls/red_soul_pixel.png" id="2_select_heart"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_enemy_border"]
+bg_color = Color(0, 0, 0, 0)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 1, 1, 1)
+
+[node name="EnemyNamePanel" type="PanelContainer" unique_id=164434755]
+custom_minimum_size = Vector2(250, 50)
+layout_mode = 3
+anchors_preset = -1
+offset_left = 420.0
+offset_top = 520.0
+offset_right = 670.0
+offset_bottom = 570.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_enemy_border")
+
+[node name="EnemyNameBtn" type="Button" parent="." unique_id=1644347551]
+layout_mode = 2
+script = ExtResource("1_y165g")
+
+[node name="SelectHeart" type="Sprite2D" parent="." unique_id=1644347552]
+visible = false
+scale = Vector2(0.05, 0.05)
+position = Vector2(-120, 0)
+texture = ExtResource("2_select_heart")

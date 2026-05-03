@@ -1,0 +1,260 @@
+[gd_scene format=3 uid="uid://bonedows_quiz_v2"]
+
+[ext_resource type="Script"   path="res://scripts/bonedows/bonedows_apps/quiz_app.gd" id="1_qz"]
+[ext_resource type="FontFile" path="res://assets/fonts/DTM-Sans.otf"  id="2_font"]
+[ext_resource type="FontFile" path="res://assets/fonts/DTM-Mono.otf"  id="3_mono"]
+
+; ── Window styles ─────────────────────────────────────
+[sub_resource type="StyleBoxFlat" id="SB_win_bg"]
+bg_color     = Color(0.06, 0.06, 0.13, 0.98)
+border_color = Color(0.20, 0.20, 0.40, 1.0)
+border_width_top    = 1
+border_width_bottom = 1
+border_width_left   = 1
+border_width_right  = 1
+
+[sub_resource type="StyleBoxFlat" id="SB_title"]
+bg_color     = Color(0.10, 0.10, 0.22, 1.0)
+border_color = Color(0.20, 0.20, 0.45, 1.0)
+border_width_bottom = 1
+
+[sub_resource type="StyleBoxFlat" id="SB_submit_normal"]
+bg_color     = Color(0.14, 0.14, 0.30, 1.0)
+border_color = Color(0.35, 0.35, 0.70, 1.0)
+set_border_width_all = 2
+corner_radius_top_left     = 4
+corner_radius_top_right    = 4
+corner_radius_bottom_left  = 4
+corner_radius_bottom_right = 4
+
+[sub_resource type="StyleBoxFlat" id="SB_submit_hover"]
+bg_color     = Color(0.22, 0.22, 0.48, 1.0)
+border_color = Color(0.55, 0.55, 1.0, 1.0)
+set_border_width_all = 2
+corner_radius_top_left     = 4
+corner_radius_top_right    = 4
+corner_radius_bottom_left  = 4
+corner_radius_bottom_right = 4
+
+[sub_resource type="StyleBoxFlat" id="SB_alphys_panel"]
+bg_color     = Color(0.06, 0.08, 0.14, 0.97)
+border_color = Color(0.40, 0.60, 0.90, 1.0)
+set_border_width_all = 2
+corner_radius_top_left     = 6
+corner_radius_top_right    = 6
+corner_radius_bottom_left  = 6
+corner_radius_bottom_right = 6
+
+; ═══════════════════════════════════════════════════════
+; ROOT — fills AppLayer (1280 × 660 usable area)
+; ═══════════════════════════════════════════════════════
+[node name="QuizApp" type="Control"]
+anchors_preset  = 15
+anchor_right    = 1.0
+anchor_bottom   = 1.0
+script = ExtResource("1_qz")
+
+[node name="WindowBG" type="Panel" parent="."]
+anchors_preset  = 15
+anchor_right    = 1.0
+anchor_bottom   = 1.0
+theme_override_styles/panel = SubResource("SB_win_bg")
+
+; ── Title bar ─────────────────────────────────────────
+[node name="TitleBar" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left   = 0.0
+anchor_top    = 0.0
+anchor_right  = 1.0
+anchor_bottom = 0.0
+offset_bottom = 34
+grow_horizontal = 2
+theme_override_styles/panel = SubResource("SB_title")
+
+[node name="TitleLabel" type="Label" parent="TitleBar"]
+layout_mode = 0
+position = Vector2(12, 7)
+size     = Vector2(800, 22)
+text     = "ALPHYS RESEARCH PORTAL  ——  Royal Research Initiative"
+theme_override_font_sizes/font_size = 15
+theme_override_colors/font_color    = Color(1.0, 0.85, 0.3, 1.0)
+theme_override_fonts/font = ExtResource("2_font")
+
+[node name="CloseBtn" type="Button" parent="TitleBar"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left   = 1.0
+anchor_top    = 0.0
+anchor_right  = 1.0
+anchor_bottom = 1.0
+offset_left   = -50
+offset_right  = -4
+offset_top    = 2
+offset_bottom = -2
+grow_horizontal = 0
+text = " ✕ "
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color    = Color(1.0, 0.45, 0.45, 1.0)
+
+; ── Content area ──────────────────────────────────────
+[node name="ContentArea" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left   = 0.0
+anchor_top    = 0.0
+anchor_right  = 1.0
+anchor_bottom = 1.0
+offset_top    = 34
+offset_bottom = -50
+grow_horizontal = 2
+grow_vertical   = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="ContentArea"]
+anchors_preset  = 15
+anchor_right    = 1.0
+anchor_bottom   = 1.0
+offset_left     = 16
+offset_right    = -16
+offset_top      = 12
+offset_bottom   = -12
+
+[node name="VBox" type="VBoxContainer" parent="ContentArea/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 14
+
+[node name="ProgressLabel" type="Label" parent="ContentArea/ScrollContainer/VBox"]
+text = "Question 1 of 8"
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color    = Color(0.60, 0.60, 0.65, 1.0)
+theme_override_fonts/font = ExtResource("3_mono")
+
+[node name="QuestionLabel" type="RichTextLabel" parent="ContentArea/ScrollContainer/VBox"]
+bbcode_enabled      = true
+fit_content         = true
+scroll_active       = false
+custom_minimum_size = Vector2(0, 72)
+theme_override_font_sizes/normal_font_size = 20
+theme_override_colors/default_color        = Color(1.0, 1.0, 1.0, 1.0)
+theme_override_fonts/normal_font = ExtResource("2_font")
+
+[node name="QuestionNote" type="Label" parent="ContentArea/ScrollContainer/VBox"]
+autowrap_mode = 3
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color    = Color(0.50, 0.62, 0.72, 1.0)
+theme_override_fonts/font = ExtResource("3_mono")
+
+[node name="AnswersVBox" type="VBoxContainer" parent="ContentArea/ScrollContainer/VBox"]
+theme_override_constants/separation = 8
+
+[node name="FeedbackLabel" type="Label" parent="ContentArea/ScrollContainer/VBox"]
+text = ""
+theme_override_font_sizes/font_size = 17
+theme_override_fonts/font = ExtResource("2_font")
+
+; ── Submit button ─────────────────────────────────────
+[node name="SubmitBtn" type="Button" parent="ContentArea"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left   = 0.0
+anchor_top    = 1.0
+anchor_right  = 1.0
+anchor_bottom = 1.0
+offset_left   = 16
+offset_right  = -16
+offset_top    = 2
+offset_bottom = 50
+grow_horizontal = 2
+grow_vertical   = 2
+text     = "SUBMIT ANSWER"
+disabled = true
+theme_override_font_sizes/font_size = 19
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_styles/normal   = SubResource("SB_submit_normal")
+theme_override_styles/hover    = SubResource("SB_submit_hover")
+theme_override_styles/disabled = SubResource("SB_submit_normal")
+
+; ═══════════════════════════════════════════════════════
+; RESULT PANEL
+; ═══════════════════════════════════════════════════════
+[node name="ResultPanel" type="Panel" parent="."]
+anchors_preset  = 15
+anchor_right    = 1.0
+anchor_bottom   = 1.0
+visible = false
+theme_override_styles/panel = SubResource("SB_win_bg")
+
+[node name="ResultLabel" type="RichTextLabel" parent="ResultPanel"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left   = 0.1
+anchor_top    = 0.12
+anchor_right  = 0.9
+anchor_bottom = 0.88
+grow_horizontal = 2
+grow_vertical   = 2
+bbcode_enabled  = true
+scroll_active   = false
+theme_override_font_sizes/normal_font_size = 22
+theme_override_colors/default_color        = Color(1.0, 1.0, 1.0, 1.0)
+theme_override_fonts/normal_font = ExtResource("2_font")
+
+; ═══════════════════════════════════════════════════════
+; ALPHYS MESSAGE PANEL  — lore bomb
+; Floats center-screen, has portrait + scrollable text
+; ═══════════════════════════════════════════════════════
+[node name="AlphysMessagePanel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left   = 0.12
+anchor_top    = 0.08
+anchor_right  = 0.88
+anchor_bottom = 0.92
+grow_horizontal = 2
+grow_vertical   = 2
+visible = false
+theme_override_styles/panel = SubResource("SB_alphys_panel")
+
+; Alphys portrait — top left of message panel
+; Texture set at runtime from alphys_icon.png
+[node name="AlphysPortrait" type="TextureRect" parent="AlphysMessagePanel"]
+layout_mode = 0
+position = Vector2(12, 12)
+size     = Vector2(52, 52)
+expand_mode  = 1
+stretch_mode = 5
+
+[node name="AlphysText" type="RichTextLabel" parent="AlphysMessagePanel"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left   = 0.0
+anchor_top    = 0.0
+anchor_right  = 1.0
+anchor_bottom = 1.0
+offset_left   = 16
+offset_top    = 16
+offset_right  = -16
+offset_bottom = -60
+grow_horizontal = 2
+grow_vertical   = 2
+bbcode_enabled  = true
+scroll_active   = true
+theme_override_font_sizes/normal_font_size = 18
+theme_override_colors/default_color        = Color(0.85, 0.92, 1.0, 1.0)
+theme_override_fonts/normal_font = ExtResource("3_mono")
+
+[node name="OkBtn" type="Button" parent="AlphysMessagePanel"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left   = 0.35
+anchor_top    = 1.0
+anchor_right  = 0.65
+anchor_bottom = 1.0
+offset_top    = -52
+offset_bottom = -10
+grow_horizontal = 2
+grow_vertical   = 0
+text = "  OK  "
+theme_override_font_sizes/font_size = 18
+theme_override_fonts/font = ExtResource("2_font")

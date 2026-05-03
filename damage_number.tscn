@@ -1,0 +1,22 @@
+[gd_scene format=3 uid="uid://dkevqjfef27y4"]
+
+[ext_resource type="Script" uid="uid://cg4dy4ge3nkuq" path="res://scripts/battle/damage_number.gd" id="1_s5n25"]
+
+[node name="DamageNumber" type="Control" unique_id=1227311254]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_s5n25")
+
+[node name="ShadowLabel" type="Label" parent="." unique_id=120152583]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="MainLabel" type="Label" parent="." unique_id=827567634]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0

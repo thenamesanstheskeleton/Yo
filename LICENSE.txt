@@ -1,0 +1,407 @@
+extends Control
+
+# =====================================================
+#  BattleManager.gd (FIXED)
+#  Attach to: BattleScene (Control node — root)
+# =====================================================
+
+# ── Battle Box & Arena ──────────────────────────────
+@onready var battle_box       : Control         = $UI/BattleBox
+@onready var bullet_container : Node2D          = $UI/BattleBox/Bulletcontainer
+@onready var box_anim         : AnimationPlayer = $UI/BattleBox/BoxAnim
+@onready var soul_node        : CharacterBody2D = $UI/BattleBox/Soul
+
+# ── UI Components ───────────────────────────────────
+@onready var enemy_sprite     : Sprite2D        = $UI/EnemyLayer/EnemySprite
+@onready var menu_row         : HBoxContainer   = $UI/MenuRow
+@onready var fight_btn        : TextureButton   = $UI/MenuRow/FightBtn
+@onready var act_btn          : TextureButton   = $UI/MenuRow/ActBtn
+@onready var item_btn         : TextureButton   = $UI/MenuRow/ItemBtn
+@onready var mercy_btn        : TextureButton   = $UI/MenuRow/MercyBtn
+@onready var fight_meter      : Control         = $UI/FightMeter
+@onready var act_submenu      : Control         = $UI/ActSubmenu
+
+# ── New UI Scripts ──────────────────────────────────
+@onready var narrator_box     : PanelContainer  = $UI/NarratorBox
+@onready var enemy_name_btn   : Button          = $UI/EnemyNameBtn
+@onready var enemy_hp_bar     : Control         = $UI/EnemyHPBarRoot
+@onready var player_stats     : HBoxContainer   = $UI/PlayerStatsRoot
+
+# ── Enemy Data ──────────────────────────────────────
+var enemy_name        : String = "Lesser Dog"
+var enemy_hp          : int    = 20
+var enemy_hp_max      : int    = 20
+var enemy_at          : int    = 6
+var enemy_df          : int    = 2
+var enemy_xp          : int    = 50
+var enemy_gold        : int    = 40
+var enemy_flavor      : String = "* It's a dog."
+var enemy_act_options : Array  = ["Check", "Pet", "Ignore"]
+var can_spare         : bool   = false
+
+# ── Player Data ─────────────────────────────────────
+var player_hp      : int    = 20
+var player_hp_max  : int    = 20
+var player_at      : int    = 10
+var player_lv      : int    = 1
+var player_name    : String = "CHARA"
+
+# ── State Machine ───────────────────────────────────
+enum State { PLAYER_TURN, ENEMY_TURN, FIGHT_METER, ACT_MENU, RESULT }
+var state : State = State.PLAYER_TURN
+
+# ── Menu Navigation ─────────────────────────────────
+var _menu_index   : int   = 0
+var _menu_buttons : Array = []
+
+# ── Box Tween ───────────────────────────────────────
+var _box_tween : Tween = null
+
+signal box_restored
+
+
+# =====================================================
+#  READY
+# =====================================================
+func _ready() -> void:
+	_menu_buttons = [fight_btn, act_btn, item_btn, mercy_btn]
+
+	fight_btn.pressed.connect(_on_fight_pressed)
+	act_btn.pressed.connect(_on_act_pressed)
+	item_btn.pressed.connect(_on_item_pressed)
+	mercy_btn.pressed.connect(_on_mercy_pressed)
+
+	# Soul starts hidden
+	soul_node.visible = false
+
+	# Initialize all 4 UI scripts
+	_init_narrator_box()
+	_init_enemy_name()
+	_init_enemy_hp_bar()
+	_init_player_stats()
+
+	_set_state(State.PLAYER_TURN)
+
+
+# =====================================================
+#  UI INITIALIZATION
+# =====================================================
+func _init_narrator_box() -> void:
+	if narrator_box and narrator_box.has_method("show_text"):
+		narrator_box.show_text("* " + enemy_flavor)
+		narrator_box.choice_made.connect(_on_narrator_choice)
+
+func _init_enemy_name() -> void:
+	if enemy_name_btn and enemy_name_btn.has_method("set_enemy_name"):
+		enemy_name_btn.set_enemy_name(enemy_name)
+		enemy_name_btn.enemy_name_pressed.connect(_on_enemy_name_pressed)
+
+func _init_enemy_hp_bar() -> void:
+	if enemy_hp_bar and enemy_hp_bar.has_method("setup"):
+		enemy_hp_bar.setup(enemy_hp, enemy_hp_max)
+
+func _init_player_stats() -> void:
+	if player_stats and player_stats.has_method("setup"):
+		player_stats.setup(player_name, player_lv, player_hp, player_hp_max)
+
+
+# =====================================================
+#  STATE MACHINE
+# =====================================================
+func _set_state(new_state: State) -> void:
+	state = new_state
+
+	match state:
+
+		State.PLAYER_TURN:
+			soul_node.visible = false
+			enemy_sprite.visible = true
+			menu_row.visible = true
+			narrator_box.visible = true
+			fight_meter.visible = false
+			_clear_bullets()
+			if narrator_box:
+				narrator_box.show_text("* " + enemy_flavor)
+
+		State.ENEMY_TURN:
+			menu_row.visible = false
+			soul_node.visible = true
+			narrator_box.visible = true
+			reset_soul_to_start()
+			_clear_bullets()
+			if narrator_box:
+				narrator_box.show_text("")
+			await get_tree().create_timer(0.8).timeout
+			_set_state(State.PLAYER_TURN)
+
+		State.FIGHT_METER:
+			menu_row.visible = false
+			soul_node.visible = false
+			narrator_box.visible = false
+			enemy_sprite.visible = true
+			fight_meter.visible = true
+			_show_enemy_hp()
+
+		State.ACT_MENU:
+			menu_row.visible = false
+			soul_node.visible = false
+			narrator_box.visible = true
+			if narrator_box:
+				narrator_box.show_choices(enemy_act_options)
+
+		State.RESULT:
+			menu_row.visible = false
+			soul_node.visible = false
+			narrator_box.visible = true
+			if narrator_box:
+				narrator_box.show_text("* YOU WON!\n* You earned %d XP and %d gold." % [enemy_xp, enemy_gold])
+
+
+# =====================================================
+#  SOUL POSITIONING
+# =====================================================
+func reset_soul_to_start() -> void:
+	if soul_node:
+		soul_node.position = Vector2(260, 190)
+		soul_node.visible = true
+
+
+# =====================================================
+#  NARRATOR CALLBACKS
+# =====================================================
+func _on_narrator_choice(option: String) -> void:
+	_do_act(option)
+
+func _on_enemy_name_pressed() -> void:
+	if state == State.PLAYER_TURN:
+		_on_fight_pressed()
+
+
+# =====================================================
+#  MENU SYSTEM
+# =====================================================
+func _reset_buttons() -> void:
+	for btn in _menu_buttons:
+		btn.modulate = Color.WHITE
+
+func _highlight_menu() -> void:
+	for i in range(_menu_buttons.size()):
+		_menu_buttons[i].modulate = Color.WHITE if i == _menu_index else Color(0.65, 0.65, 0.65)
+
+func _activate_menu(index: int) -> void:
+	if state != State.PLAYER_TURN:
+		return
+	_reset_buttons()
+	match index:
+		0: _on_fight_pressed()
+		1: _on_act_pressed()
+		2: _on_item_pressed()
+		3: _on_mercy_pressed()
+
+
+# =====================================================
+#  INPUT
+# =====================================================
+func _input(event: InputEvent) -> void:
+	if state != State.PLAYER_TURN:
+		return
+	if event is InputEventKey and event.pressed:
+		match event.keycode:
+			KEY_LEFT:
+				_menu_index = wrapi(_menu_index - 1, 0, 4)
+				_highlight_menu()
+			KEY_RIGHT:
+				_menu_index = wrapi(_menu_index + 1, 0, 4)
+				_highlight_menu()
+			KEY_Z, KEY_ENTER:
+				_activate_menu(_menu_index)
+
+
+# =====================================================
+#  BUTTON ACTIONS
+# =====================================================
+func _on_fight_pressed() -> void:
+	if state != State.PLAYER_TURN:
+		return
+	_reset_buttons()
+	_set_state(State.FIGHT_METER)
+
+func _on_act_pressed() -> void:
+	if state != State.PLAYER_TURN:
+		return
+	_reset_buttons()
+	_set_state(State.ACT_MENU)
+
+func _on_item_pressed() -> void:
+	if state != State.PLAYER_TURN:
+		return
+	_reset_buttons()
+	if narrator_box:
+		narrator_box.show_text("* (No items yet.)")
+
+func _on_mercy_pressed() -> void:
+	if state != State.PLAYER_TURN:
+		return
+	_reset_buttons()
+	if can_spare:
+		if narrator_box:
+			narrator_box.show_text("* You spared the " + enemy_name + ".")
+		await get_tree().create_timer(1.5).timeout
+		_set_state(State.RESULT)
+	else:
+		if narrator_box:
+			narrator_box.show_text("* But it was unwilling to stop.")
+		await get_tree().create_timer(1.2).timeout
+		_set_state(State.ENEMY_TURN)
+
+
+# =====================================================
+#  ACT SUBMENU
+# =====================================================
+func _do_act(option: String) -> void:
+	match option:
+		"Check":
+			if narrator_box:
+				narrator_box.show_text("* %s\n* ATK %d  DEF %d\n* A very good dog." % [enemy_name, enemy_at, enemy_df])
+		"Pet":
+			if narrator_box:
+				narrator_box.show_text("* You pet the " + enemy_name + ".\n* It wiggled its tail!")
+			can_spare = true
+		"Ignore":
+			if narrator_box:
+				narrator_box.show_text("* You ignored the " + enemy_name + ".\n* It looked confused.")
+		_:
+			if narrator_box:
+				narrator_box.show_text("* ...")
+	await get_tree().create_timer(1.2).timeout
+	_set_state(State.ENEMY_TURN)
+
+
+# =====================================================
+#  FIGHT METER
+# =====================================================
+func on_fight_confirmed(multiplier: float) -> void:
+	fight_meter.visible = false
+	narrator_box.visible = true
+	_apply_enemy_damage(multiplier)
+
+func _apply_enemy_damage(multiplier: float) -> void:
+	if multiplier <= 0.0:
+		if narrator_box:
+			narrator_box.show_text("* MISS!")
+		await get_tree().create_timer(1.0).timeout
+		_set_state(State.ENEMY_TURN)
+		return
+
+	var offense: int = player_at + int(player_lv * 2.0)
+	var meter_scale: float = _meter_damage_scale(multiplier)
+	var scaled_offense: int = int(round(float(offense) * meter_scale))
+	var real_dmg: int = max(1, scaled_offense - enemy_df)
+
+	enemy_hp = max(0, enemy_hp - real_dmg)
+	if narrator_box:
+		narrator_box.show_text("* The " + enemy_name + " lost %d HP." % real_dmg)
+	
+	# Update enemy HP bar
+	if enemy_hp_bar and enemy_hp_bar.has_method("update_hp"):
+		enemy_hp_bar.update_hp(enemy_hp, enemy_hp_max)
+	
+	_flash_enemy()
+	await get_tree().create_timer(1.0).timeout
+
+	if enemy_hp <= 0:
+		_enemy_die()
+	else:
+		_set_state(State.ENEMY_TURN)
+
+func _meter_damage_scale(multiplier: float) -> float:
+	if multiplier >= 1.0:
+		return 1.25
+	elif multiplier >= 0.75:
+		return 1.00
+	elif multiplier >= 0.40:
+		return 0.75
+	elif multiplier > 0.0:
+		return 0.45
+	return 0.0
+
+func _flash_enemy() -> void:
+	if not enemy_sprite:
+		return
+	var t := create_tween()
+	t.tween_property(enemy_sprite, "modulate", Color(1, 1, 1, 0), 0.05)
+	t.tween_property(enemy_sprite, "modulate", Color.WHITE, 0.05)
+	t.tween_property(enemy_sprite, "modulate", Color(1, 1, 1, 0), 0.05)
+	t.tween_property(enemy_sprite, "modulate", Color.WHITE, 0.1)
+
+
+# =====================================================
+#  HP BAR DISPLAY
+# =====================================================
+func _show_enemy_hp() -> void:
+	if enemy_hp_bar and enemy_hp_bar.has_method("setup"):
+		enemy_hp_bar.visible = true
+		enemy_hp_bar.setup(enemy_hp, enemy_hp_max)
+
+
+# =====================================================
+#  BULLETS
+# =====================================================
+func _clear_bullets() -> void:
+	for child in bullet_container.get_children():
+		child.queue_free()
+
+
+# =====================================================
+#  DEATH
+# =====================================================
+func _enemy_die() -> void:
+	var t := create_tween()
+	t.tween_property(enemy_sprite, "modulate:a", 0.0, 0.8)
+	await t.finished
+	_set_state(State.RESULT)
+
+func _player_die() -> void:
+	if narrator_box:
+		narrator_box.show_text("* You were defeated.")
+	soul_node.visible = false
+	menu_row.visible = false
+	
+ # File 0037 Refinement
+func _process(_delta):
+	if state == State.PLAYER_TURN:
+	_handle_menu_navigation()
+	
+func _process(_delta):
+    if state == State.PLAYER_TURN:
+        _handle_menu_navigation()
+
+func _handle_menu_navigation():
+    if Input.is_action_just_pressed("ui_left"):
+        _menu_index = wrapi(_menu_index - 1, 0, 4)
+        _update_selector()
+    if Input.is_action_just_pressed("ui_right"):
+        _menu_index = wrapi(_menu_index + 1, 0, 4)
+        _update_selector()
+
+func _update_selector():
+	var target = _menu_buttons[_menu_index]
+    # Point-Perfect Alignment:
+    # We place the heart exactly 35 pixels left of the button's center
+    menu_selector.global_position = target.global_position + Vector2(20, target.size.y / 2)
+
+
+
+I meant this 
+
+Line 372:Expected indented block after "if" block.
+Line 375:Used space character for indentation instead of tab as used before in the file.
+Line 376:Used space character for indentation instead of tab as used before in the file.
+Line 375:Function "_process" has the same name as a previously declared function.
+Line 379:Used space character for indentation instead of tab as used before in the file.
+Line 380:Used space character for indentation instead of tab as used before in the file.
+Line 381:Used space character for indentation instead of tab as used before in the file.
+Line 382:Used space character for indentation instead of tab as used before in the file.
+Line 383:Used space character for indentation instead of tab as used before in the file.
+Line 384:Used space character for indentation instead of tab as used before in the file.
+Line 388:Used space character for indentation instead of tab as used before in the file.

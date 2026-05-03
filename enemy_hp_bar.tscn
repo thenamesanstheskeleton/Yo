@@ -1,0 +1,29 @@
+[gd_scene format=3 uid="uid://dy6yop82hyvy4"]
+
+[ext_resource type="Script" uid="uid://ivn7a3k0ws1o" path="res://scripts/battle/EnemyHPBar.gd" id="1_rnes8"]
+
+[node name="EnemyHPBarRoot" type="Control" unique_id=1651303426]
+custom_minimum_size = Vector2(300, 20)
+layout_mode = 3
+anchors_preset = -1
+offset_left = 700.0
+offset_top = 535.0
+offset_right = 1000.0
+offset_bottom = 555.0
+script = ExtResource("1_rnes8")
+
+[node name="RedBar" type="ColorRect" parent="." unique_id=1944139026]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.6, 0.0, 0.0, 1.0)
+
+[node name="GreenBar" type="ColorRect" parent="." unique_id=122829960]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.2, 0.9, 0.2, 1.0)

@@ -1,0 +1,57 @@
+[gd_scene format=3 uid="uid://dfxt0bi1dv6fk"]
+
+[ext_resource type="Script" uid="uid://eiu2n2q6bvx4" path="res://scripts/battle/PlayerStats.gd" id="1_ffbt0"]
+
+[node name="PlayerStatsRoot" type="HBoxContainer" unique_id=270534945]
+layout_mode = 3
+anchors_preset = -1
+offset_left = 420.0
+offset_top = 860.0
+offset_right = 1020.0
+offset_bottom = 900.0
+theme_override_constants/separation = 40
+script = ExtResource("1_ffbt0")
+
+[node name="NameLabel" type="Label" parent="." unique_id=1637904530]
+layout_mode = 2
+custom_minimum_size = Vector2(80, 0)
+text = "CHARA"
+
+[node name="LVLabel" type="Label" parent="." unique_id=673218734]
+layout_mode = 2
+custom_minimum_size = Vector2(80, 0)
+text = "LV 1"
+
+[node name="HSpacer" type="Control" parent="." unique_id=9999999]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HPLabel" type="Label" parent="." unique_id=488382657]
+layout_mode = 2
+custom_minimum_size = Vector2(50, 0)
+text = "HP"
+
+[node name="HPBarRoot" type="Control" parent="." unique_id=2112034933]
+custom_minimum_size = Vector2(200, 16)
+layout_mode = 2
+
+[node name="RedBar" type="ColorRect" parent="HPBarRoot" unique_id=2020378368]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.85, 0.1, 0.1, 1.0)
+
+[node name="YellowBar" type="ColorRect" parent="HPBarRoot" unique_id=2131865533]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.95, 0.85, 0.1, 1.0)
+
+[node name="HpValue" type="Label" parent="." unique_id=1035032208]
+layout_mode = 2
+custom_minimum_size = Vector2(80, 0)
+text = "20 / 20"

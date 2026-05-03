@@ -1,0 +1,348 @@
+[gd_scene format=3 uid="uid://name_input_scene"]
+
+[ext_resource type="Script" uid="uid://name_input_script" path="res://scripts/NameInput.gd" id="1_script"]
+[ext_resource type="FontFile" uid="uid://dtm_sans"        path="res://assets/fonts/DTM-Sans.otf" id="2_font"]
+[ext_resource type="FontFile" uid="uid://dtm_mono"        path="res://assets/fonts/DTM-Mono.otf" id="3_mono"]
+
+[sub_resource type="LabelSettings" id="LS_title"]
+font = ExtResource("2_font")
+font_size = 56
+font_color = Color(1, 1, 1, 1)
+
+[sub_resource type="LabelSettings" id="LS_name"]
+font = ExtResource("2_font")
+font_size = 80
+font_color = Color(1, 1, 1, 1)
+outline_color = Color(0, 0, 0, 1)
+outline_size = 3
+
+[sub_resource type="LabelSettings" id="LS_cursor"]
+font = ExtResource("2_font")
+font_size = 80
+font_color = Color(1, 1, 0.2, 1)
+
+[sub_resource type="LabelSettings" id="LS_confirm_name"]
+font = ExtResource("2_font")
+font_size = 100
+font_color = Color(1, 1, 1, 1)
+outline_color = Color(0, 0, 0, 1)
+outline_size = 5
+
+[sub_resource type="LabelSettings" id="LS_confirm_msg"]
+font = ExtResource("3_mono")
+font_size = 42
+font_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxEmpty" id="SBE_blank"]
+
+[sub_resource type="Animation" id="Anim_blink"]
+resource_name = "Blink"
+length = 0.9
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 0
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.45, 0.9),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AL_cursor"]
+_data = { "Blink": SubResource("Anim_blink") }
+
+[sub_resource type="Animation" id="Anim_fade_in"]
+resource_name = "FadeIn"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:color")
+tracks/0/interp = 1
+tracks/0/loop_wrap = false
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(0, 0, 0, 1), Color(0, 0, 0, 0)]
+}
+
+[sub_resource type="Animation" id="Anim_fade_out"]
+resource_name = "FadeOut"
+length = 0.4
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:color")
+tracks/0/interp = 1
+tracks/0/loop_wrap = false
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.4),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(0, 0, 0, 0), Color(0, 0, 0, 1)]
+}
+
+[sub_resource type="Animation" id="Anim_reset"]
+resource_name = "RESET"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:color")
+tracks/0/interp = 1
+tracks/0/loop_wrap = false
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(0, 0, 0, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AL_fade"]
+_data = {
+"FadeIn":  SubResource("Anim_fade_in"),
+"FadeOut": SubResource("Anim_fade_out"),
+"RESET":   SubResource("Anim_reset")
+}
+
+[node name="NameInput" type="Control" unique_id=200100001]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+
+[node name="Background" type="ColorRect" parent="." unique_id=200100002]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="NameInputSystem" type="VBoxContainer" parent="." unique_id=200100003]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -500.0
+offset_top = -680.0
+offset_right = 500.0
+offset_bottom = 680.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+texture_filter = 3
+theme_override_constants/separation = 36
+
+[node name="TitleLabel" type="Label" parent="NameInputSystem" unique_id=200100004]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Name the fallen human."
+label_settings = SubResource("LS_title")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="NameRow" type="HBoxContainer" parent="NameInputSystem" unique_id=200100010]
+layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 120)
+alignment = 1
+theme_override_constants/separation = 0
+
+[node name="NameLabel" type="Label" parent="NameInputSystem/NameRow" unique_id=200100005]
+layout_mode = 2
+size_flags_horizontal = 0
+text = ""
+label_settings = SubResource("LS_name")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CursorLabel" type="Label" parent="NameInputSystem/NameRow" unique_id=200100006]
+layout_mode = 2
+size_flags_horizontal = 0
+text = "_"
+label_settings = SubResource("LS_cursor")
+horizontal_alignment = 0
+vertical_alignment = 1
+
+[node name="CursorAnim" type="AnimationPlayer" parent="NameInputSystem/NameRow/CursorLabel" unique_id=200100007]
+libraries = { "": SubResource("AL_cursor") }
+autoplay = "Blink"
+
+[node name="LetterGrid" type="GridContainer" parent="NameInputSystem" unique_id=200100008]
+layout_mode = 2
+size_flags_horizontal = 3
+columns = 7
+texture_filter = 3
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
+
+[node name="ActionRow" type="HBoxContainer" parent="NameInputSystem" unique_id=200100009]
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 1
+theme_override_constants/separation = 60
+
+[node name="QuitButton" type="Button" parent="NameInputSystem/ActionRow" unique_id=210000001]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Quit"
+flat = true
+theme_override_styles/normal = SubResource("SBE_blank")
+theme_override_styles/hover = SubResource("SBE_blank")
+theme_override_styles/pressed = SubResource("SBE_blank")
+theme_override_styles/focus = SubResource("SBE_blank")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 0.2, 1)
+theme_override_colors/font_pressed_color = Color(1, 1, 0.2, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 56
+
+[node name="BackspaceButton" type="Button" parent="NameInputSystem/ActionRow" unique_id=210000002]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Backspace"
+flat = true
+theme_override_styles/normal = SubResource("SBE_blank")
+theme_override_styles/hover = SubResource("SBE_blank")
+theme_override_styles/pressed = SubResource("SBE_blank")
+theme_override_styles/focus = SubResource("SBE_blank")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 0.2, 1)
+theme_override_colors/font_pressed_color = Color(1, 1, 0.2, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 56
+
+[node name="DoneButton" type="Button" parent="NameInputSystem/ActionRow" unique_id=210000003]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Done"
+flat = true
+theme_override_styles/normal = SubResource("SBE_blank")
+theme_override_styles/hover = SubResource("SBE_blank")
+theme_override_styles/pressed = SubResource("SBE_blank")
+theme_override_styles/focus = SubResource("SBE_blank")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 0.2, 1)
+theme_override_colors/font_pressed_color = Color(1, 1, 0.2, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 56
+
+; ── CONFIRM SCREEN ────────────────────────────────────────────
+; Layout matches Image 4:
+;   ConfirmMsg  = TOP   (small reaction text)
+;   ConfirmName = CENTER (huge name, animates in)
+;   ChoiceRow   = BOTTOM (No / Yes)
+
+[node name="ConfirmScreen" type="Control" parent="." unique_id=300100001]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+visible = false
+
+[node name="ConfirmMsg" type="Label" parent="ConfirmScreen" unique_id=300100003]
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 0.0
+offset_top = 160.0
+offset_bottom = 420.0
+grow_horizontal = 2
+grow_vertical = 2
+text = ""
+label_settings = SubResource("LS_confirm_msg")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ConfirmName" type="Label" parent="ConfirmScreen" unique_id=300100002]
+anchor_left = 0.5
+anchor_top = 0.38
+anchor_right = 0.5
+anchor_bottom = 0.38
+offset_left = -500.0
+offset_top = -120.0
+offset_right = 500.0
+offset_bottom = 120.0
+grow_horizontal = 2
+grow_vertical = 2
+text = ""
+label_settings = SubResource("LS_confirm_name")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ChoiceRow" type="HBoxContainer" parent="ConfirmScreen" unique_id=300100004]
+anchor_left = 0.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -230.0
+offset_bottom = -110.0
+grow_horizontal = 2
+grow_vertical = 0
+alignment = 1
+theme_override_constants/separation = 280
+
+[node name="NoButton" type="Button" parent="ConfirmScreen/ChoiceRow" unique_id=310000001]
+layout_mode = 2
+size_flags_horizontal = 0
+text = "No"
+flat = true
+theme_override_styles/normal = SubResource("SBE_blank")
+theme_override_styles/hover = SubResource("SBE_blank")
+theme_override_styles/pressed = SubResource("SBE_blank")
+theme_override_styles/focus = SubResource("SBE_blank")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 0.2, 1)
+theme_override_colors/font_pressed_color = Color(1, 1, 0.2, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 72
+
+[node name="YesButton" type="Button" parent="ConfirmScreen/ChoiceRow" unique_id=310000002]
+layout_mode = 2
+size_flags_horizontal = 0
+text = "Yes"
+flat = true
+theme_override_styles/normal = SubResource("SBE_blank")
+theme_override_styles/hover = SubResource("SBE_blank")
+theme_override_styles/pressed = SubResource("SBE_blank")
+theme_override_styles/focus = SubResource("SBE_blank")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 0.2, 1)
+theme_override_colors/font_pressed_color = Color(1, 1, 0.2, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 52
+
+; ── BLACK SCREEN — Quit fade ──────────────────────────────────
+[node name="BlackScreenTransition" type="ColorRect" parent="." unique_id=200200001]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+mouse_filter = 2
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="BlackScreenTransition" unique_id=200200002]
+libraries = { "": SubResource("AL_fade") }
+autoplay = "FadeIn"
+
+; ── WHITE SCREEN — Yes → Chapter 1 flash ─────────────────────
+[node name="WhiteScreenTransition" type="ColorRect" parent="." unique_id=200300001]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(1, 1, 1, 1)
+modulate = Color(1, 1, 1, 0)
+mouse_filter = 2

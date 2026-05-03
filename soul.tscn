@@ -1,0 +1,30 @@
+[gd_scene format=3 uid="uid://6e62cepbxuts"]
+
+[ext_resource type="Script" uid="uid://ccfk4aoiyjxwy" path="res://scripts/battle/Soul.gd" id="1_ukfyu"]
+[ext_resource type="Texture2D" uid="uid://2qsfal8tdwi5" path="res://assets/images/ui/souls/red_soul_pixel.png" id="2_ukfyu"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ba2jp"]
+size = Vector2(16, 14)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_2qor3"]
+size = Vector2(12, 10)
+
+[node name="Soul" type="CharacterBody2D" unique_id=115733813]
+scale = Vector2(0.5, 0.5)
+collision_mask = 2
+script = ExtResource("1_ukfyu")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=151804914]
+texture_filter = 1
+scale = Vector2(0.12, 0.12)
+texture = ExtResource("2_ukfyu")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=2052230600]
+shape = SubResource("RectangleShape2D_ba2jp")
+
+[node name="HurtBox" type="Area2D" parent="." unique_id=340353554]
+collision_layer = 0
+collision_mask = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HurtBox" unique_id=253986775]
+shape = SubResource("RectangleShape2D_2qor3")
